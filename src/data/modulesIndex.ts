@@ -1,18 +1,7 @@
 import type { ModuleInfo, ProblemConfig } from '../engine/types';
 import { loopProblems } from '../modules/loops/problems';
 import { arrayProblems } from '../modules/array/problems';
-import { getArrayApproach } from '../modules/array/approaches';
-import { defaultApproach } from '../components/shared/ApproachPanel';
-
-function enrichProblem(p: ProblemConfig): ProblemConfig {
-  if (p.approach) return p;
-  const keys = Object.keys(p.defaultInput as Record<string, unknown>);
-  const approach =
-    p.module === 'array'
-      ? getArrayApproach(p.id, p.title, keys, p.movementType)
-      : defaultApproach(p.title, keys, p.movementType);
-  return { ...p, approach };
-}
+import { enrichProblem } from '../explain/enrichProblem';
 
 export const modules: ModuleInfo[] = [
   {

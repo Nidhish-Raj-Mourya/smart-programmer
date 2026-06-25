@@ -1,8 +1,13 @@
+import { useState } from 'react';
 import type { MovementType } from '../../engine/types';
 import './shared.css';
 
+type CodeLanguage = 'python' | 'java';
+
 interface CodePanelProps {
   codeLines: string[];
+  javaCodeLines?: string[];
+  javaLineOffset?: number;
   activeLine: number;
   activeInnerLine?: number;
   movementType: MovementType;
@@ -10,38 +15,76 @@ interface CodePanelProps {
   innerLoopLine?: number;
 }
 
+function mapLine(line: number, lang: CodeLanguage, offset: number): number {
+  return lang === 'java' ? line + offset : line;
+}
+
 export function CodePanel({
   codeLines,
+  javaCodeLines,
+  javaLineOffset = 5,
   activeLine,
   activeInnerLine,
   movementType,
   outerLoopLine,
   innerLoopLine,
 }: CodePanelProps) {
+  const [lang, setLang] = useState<CodeLanguage>('python');
+  const hasJava = Boolean(javaCodeLines?.length);
+  const displayLines = lang === 'java' && javaCodeLines ? javaCodeLines : codeLines;
   const isDualHighlight = movementType === 'T';
+
+  const hl = mapLine(activeLine, lang, javaLineOffset);
+  const hlInner = activeInnerLine ? mapLine(activeInnerLine, lang, javaLineOffset) : undefined;
+  const outerLine = outerLoopLine ? mapLine(outerLoopLine, lang, javaLineOffset) : undefined;
+  const innerLine = innerLoopLine ? mapLine(innerLoopLine, lang, javaLineOffset) : undefined;
 
   return (
     <div className="panel code-panel">
-      <div className="panel-header">Code</div>
+      <div className="code-panel-toolbar">
+        <span className="panel-header code-panel-title">Code · debugger sync</span>
+        {hasJava && (
+          <div className="code-lang-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={lang === 'python'}
+              className={`code-lang-tab ${lang === 'python' ? 'code-lang-tab--active' : ''}`}
+              onClick={() => setLang('python')}
+            >
+              Python
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={lang === 'java'}
+              className={`code-lang-tab ${lang === 'java' ? 'code-lang-tab--active' : ''}`}
+              onClick={() => setLang('java')}
+            >
+              Java
+            </button>
+          </div>
+        )}
+      </div>
       <pre className="code-block">
-        {codeLines.map((line, i) => {
+        {displayLines.map((line, i) => {
           const lineNum = i + 1;
-          const isOuter = isDualHighlight && lineNum === outerLoopLine;
-          const isInner = isDualHighlight && lineNum === innerLoopLine;
+          const isOuter = isDualHighlight && lineNum === outerLine;
+          const isInner = isDualHighlight && lineNum === innerLine;
           const isActive =
             !isDualHighlight
-              ? lineNum === activeLine
-              : lineNum === activeLine || lineNum === activeInnerLine;
+              ? lineNum === hl
+              : lineNum === hl || lineNum === hlInner;
 
           let className = 'code-line';
           if (isDualHighlight && isOuter) className += ' code-line--outer';
           if (isDualHighlight && isInner) className += ' code-line--inner';
           if (isActive && !isDualHighlight) className += ' code-line--active';
-          if (isDualHighlight && lineNum === activeLine && isOuter) className += ' code-line--outer-active';
-          if (isDualHighlight && lineNum === activeInnerLine && isInner) className += ' code-line--inner-active';
+          if (isDualHighlight && lineNum === hl && isOuter) className += ' code-line--outer-active';
+          if (isDualHighlight && lineNum === hlInner && isInner) className += ' code-line--inner-active';
 
           return (
-            <div key={lineNum} className={className}>
+            <div key={`${lang}-${lineNum}`} className={className}>
               <span className="line-number">{lineNum}</span>
               <span className="line-text">{line || ' '}</span>
             </div>

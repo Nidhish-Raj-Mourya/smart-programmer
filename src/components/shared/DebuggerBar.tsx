@@ -22,7 +22,9 @@ export function DebuggerBar({ stepIndex, totalSteps, activeLine, message, isPlay
           Line <strong>{activeLine}</strong>
         </span>
       </div>
-      <p className="debugger-message">{message ?? 'Press Run or Step to begin execution'}</p>
+      <p className="debugger-message">
+        {message ?? '▶ Run simulation, phir Step/Play — code ki highlighted line ab execute ho rahi hai (Python / Java dono sync).'}
+      </p>
     </div>
   );
 }

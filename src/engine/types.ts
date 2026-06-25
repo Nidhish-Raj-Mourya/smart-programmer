@@ -34,9 +34,14 @@ export type MovementType =
 export type ArrayCellState = 'default' | 'highlight' | 'match' | 'skip' | 'swap' | 'found' | 'shifting' | 'empty' | 'new';
 
 export interface ProblemApproach {
-  what: string;
+  /** Problem kya puch raha hai — plain language */
+  problem: string;
+  /** Kaunse variables / memory chahiye */
   variables: string[];
-  steps: string[];
+  /** Sochne ka tarika — plan before coding */
+  approach: string[];
+  /** Code / logic kaise kaam karti hai — solution explanation */
+  solution: string;
   tip?: string;
 }
 
@@ -164,6 +169,9 @@ export interface ProblemConfig<TInput = unknown> {
   dataStructure: DataStructure;
   movementType: MovementType;
   codeLines: string[];
+  javaCodeLines?: string[];
+  /** Python activeLine + offset = Java highlighted line (wrapper lines before body) */
+  javaLineOffset?: number;
   outerLoopLine?: number;
   innerLoopLine?: number;
   defaultInput: TInput;

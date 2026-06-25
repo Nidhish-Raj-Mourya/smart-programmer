@@ -128,16 +128,6 @@ export const insertAtPosition: ProblemConfig<{ arr: number[]; pos: number; val: 
   ],
   defaultInput: { arr: [10, 20, 30, 40, 50], pos: 2, val: 25 },
   buildSteps: ({ arr, pos, val }) => buildInsertAt(arr, pos, val),
-  approach: {
-    what: 'Array mein beech mein naya number daalna — pehle jagah banao, phir value set karo.',
-    variables: ['arr', 'pos', 'val', 'i', 'n'],
-    steps: [
-      'Size 1 badhao (n+1 slots).',
-      'i = n-1 se pos tak — arr[i+1] = arr[i] (right shift).',
-      'arr[pos] = val.',
-    ],
-    tip: 'Loop ulta chalao (n-1 → pos) warna data overwrite ho jayega!',
-  },
 };
 
 export const deleteAtPosition: ProblemConfig<{ arr: number[]; pos: number }> = {
@@ -156,16 +146,6 @@ export const deleteAtPosition: ProblemConfig<{ arr: number[]; pos: number }> = {
   ],
   defaultInput: { arr: [10, 20, 30, 40, 50], pos: 2 },
   buildSteps: ({ arr, pos }) => buildDeleteAt(arr, pos),
-  approach: {
-    what: 'Ek index ka element hatao — baaki sab ek step left aayenge.',
-    variables: ['arr', 'pos', 'i', 'n', 'removed'],
-    steps: [
-      'removed = arr[pos] note karo.',
-      'i = pos se end tak: arr[i] = arr[i+1].',
-      'Last slot hatao (pop).',
-    ],
-    tip: 'Left shift mein loop aage ki taraf chalta hai (pos → end).',
-  },
 };
 
 export const insertInSorted: ProblemConfig<{ arr: number[]; val: number }> = {

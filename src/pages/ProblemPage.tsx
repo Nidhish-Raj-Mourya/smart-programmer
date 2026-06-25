@@ -18,6 +18,7 @@ export function ProblemPage() {
 
   const [inputRaw, setInputRaw] = useState('');
   const [speedMs, setSpeedMs] = useState(800);
+  const [guideOpen, setGuideOpen] = useState(false);
   const initialSteps = useMemo(
     () => (config ? config.buildSteps(config.defaultInput) : []),
     [config],
@@ -56,16 +57,35 @@ export function ProblemPage() {
         <Link to="/" className="back-link">
           ← Smart Programmer
         </Link>
-        <div>
-          <span className="module-badge">
-            {MODULE_LABELS[config.module]} · Level {config.level ?? '—'}
-          </span>
-          <h1>{config.title}</h1>
-          <p className="problem-meta">
-            #{config.programNumber ?? '—'} · Type {config.movementType} · {config.dataStructure}
-          </p>
+        <div className="problem-header-row">
+          <div>
+            <span className="module-badge">
+              {MODULE_LABELS[config.module]} · Level {config.level ?? '—'}
+            </span>
+            <h1>{config.title}</h1>
+            <p className="problem-meta">
+              #{config.programNumber ?? '—'} · Type {config.movementType} · {config.dataStructure}
+            </p>
+          </div>
+          {config.approach && (
+            <button
+              type="button"
+              className="btn-guide"
+              onClick={() => setGuideOpen(true)}
+            >
+              📖 How to solve
+            </button>
+          )}
         </div>
       </header>
+
+      {config.approach && (
+        <ApproachPanel
+          approach={config.approach}
+          open={guideOpen}
+          onClose={() => setGuideOpen(false)}
+        />
+      )}
 
       <DebuggerBar
         stepIndex={engine.stepIndex}
@@ -77,7 +97,6 @@ export function ProblemPage() {
 
       <div className="problem-layout">
         <aside className="problem-sidebar">
-          {config.approach && <ApproachPanel approach={config.approach} />}
           <InputPanel
             label={inputHint.label}
             value={inputRaw}
@@ -107,26 +126,30 @@ export function ProblemPage() {
         </aside>
 
         <main className="problem-main">
-          <div className="visual-panel panel">
-            <div className="panel-header">Simulation</div>
-            {step ? (
-              <RendererSwitch
-                dataStructure={config.dataStructure}
-                snapshot={step.snapshot}
-              />
-            ) : (
-              <p className="empty-state">Enter input and click Run to start simulation</p>
-            )}
-          </div>
+          <div className="workspace-stack">
+            <div className="visual-panel panel">
+              <div className="panel-header">Simulation</div>
+              {step ? (
+                <RendererSwitch
+                  dataStructure={config.dataStructure}
+                  snapshot={step.snapshot}
+                />
+              ) : (
+                <p className="empty-state">Enter input and click Run to start simulation</p>
+              )}
+            </div>
 
-          <CodePanel
-            codeLines={config.codeLines}
-            activeLine={step?.activeLine ?? 1}
-            activeInnerLine={step?.activeInnerLine}
-            movementType={config.movementType}
-            outerLoopLine={config.outerLoopLine}
-            innerLoopLine={config.innerLoopLine}
-          />
+            <CodePanel
+              codeLines={config.codeLines}
+              javaCodeLines={config.javaCodeLines}
+              javaLineOffset={config.javaLineOffset}
+              activeLine={step?.activeLine ?? 1}
+              activeInnerLine={step?.activeInnerLine}
+              movementType={config.movementType}
+              outerLoopLine={config.outerLoopLine}
+              innerLoopLine={config.innerLoopLine}
+            />
+          </div>
         </main>
       </div>
     </div>
