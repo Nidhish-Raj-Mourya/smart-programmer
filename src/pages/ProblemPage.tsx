@@ -5,6 +5,8 @@ import { CodePanel } from '../components/shared/CodePanel';
 import { VariableWatchPanel } from '../components/shared/VariableWatchPanel';
 import { PlaybackControls } from '../components/shared/PlaybackControls';
 import { InputPanel } from '../components/shared/InputPanel';
+import { ApproachPanel } from '../components/shared/ApproachPanel';
+import { DebuggerBar } from '../components/shared/DebuggerBar';
 import { RendererSwitch } from '../components/RendererSwitch';
 import { getProblemById } from '../data/modulesIndex';
 import { inputHintFor, MODULE_LABELS, parseInput, serializeInput } from '../utils/inputFormat';
@@ -15,11 +17,12 @@ export function ProblemPage() {
   const config = useMemo(() => (problemId ? getProblemById(problemId) : undefined), [problemId]);
 
   const [inputRaw, setInputRaw] = useState('');
+  const [speedMs, setSpeedMs] = useState(800);
   const initialSteps = useMemo(
     () => (config ? config.buildSteps(config.defaultInput) : []),
     [config],
   );
-  const engine = useStepEngine(initialSteps);
+  const engine = useStepEngine(initialSteps, speedMs);
 
   useEffect(() => {
     if (!config) return;
@@ -32,6 +35,7 @@ export function ProblemPage() {
     if (!config) return;
     const parsed = parseInput(inputRaw, config.defaultInput);
     engine.setSteps(config.buildSteps(parsed as never));
+    engine.reset();
   }, [config, inputRaw, engine]);
 
   if (!config) {
@@ -63,8 +67,17 @@ export function ProblemPage() {
         </div>
       </header>
 
+      <DebuggerBar
+        stepIndex={engine.stepIndex}
+        totalSteps={engine.steps.length}
+        activeLine={step?.activeLine ?? 1}
+        message={step?.message}
+        isPlaying={engine.isPlaying}
+      />
+
       <div className="problem-layout">
         <aside className="problem-sidebar">
+          {config.approach && <ApproachPanel approach={config.approach} />}
           <InputPanel
             label={inputHint.label}
             value={inputRaw}
@@ -74,7 +87,7 @@ export function ProblemPage() {
           />
           <VariableWatchPanel
             variables={step?.variables ?? {}}
-            message={step?.message}
+            message={undefined}
           />
           <PlaybackControls
             isPlaying={engine.isPlaying}
@@ -82,25 +95,27 @@ export function ProblemPage() {
             isAtEnd={engine.isAtEnd}
             stepIndex={engine.stepIndex}
             totalSteps={engine.steps.length}
+            speedMs={speedMs}
             onPlay={engine.play}
             onPause={engine.pause}
             onReset={engine.reset}
             onStepForward={engine.stepForward}
             onStepBackward={engine.stepBackward}
             onScrub={engine.goTo}
+            onSpeedChange={setSpeedMs}
           />
         </aside>
 
         <main className="problem-main">
           <div className="visual-panel panel">
-            <div className="panel-header">Visualization</div>
+            <div className="panel-header">Simulation</div>
             {step ? (
               <RendererSwitch
                 dataStructure={config.dataStructure}
                 snapshot={step.snapshot}
               />
             ) : (
-              <p>No steps</p>
+              <p className="empty-state">Enter input and click Run to start simulation</p>
             )}
           </div>
 

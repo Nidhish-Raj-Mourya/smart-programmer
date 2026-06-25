@@ -6,12 +6,14 @@ interface PlaybackControlsProps {
   isAtEnd: boolean;
   stepIndex: number;
   totalSteps: number;
+  speedMs: number;
   onPlay: () => void;
   onPause: () => void;
   onReset: () => void;
   onStepForward: () => void;
   onStepBackward: () => void;
   onScrub: (index: number) => void;
+  onSpeedChange: (ms: number) => void;
 }
 
 export function PlaybackControls({
@@ -20,15 +22,18 @@ export function PlaybackControls({
   isAtEnd,
   stepIndex,
   totalSteps,
+  speedMs,
   onPlay,
   onPause,
   onReset,
   onStepForward,
   onStepBackward,
   onScrub,
+  onSpeedChange,
 }: PlaybackControlsProps) {
   return (
-    <div className="playback-controls">
+    <div className="playback-controls panel">
+      <div className="panel-header">Program control</div>
       <div className="playback-buttons">
         <button type="button" onClick={onReset} disabled={isAtStart} title="Reset">
           ⏮
@@ -63,6 +68,18 @@ export function PlaybackControls({
           {totalSteps === 0 ? '0 / 0' : `${stepIndex + 1} / ${totalSteps}`}
         </span>
       </div>
+      <label className="speed-control">
+        Speed
+        <select
+          value={speedMs}
+          onChange={(e) => onSpeedChange(Number(e.target.value))}
+        >
+          <option value={1500}>Slow</option>
+          <option value={800}>Normal</option>
+          <option value={400}>Fast</option>
+          <option value={150}>Very fast</option>
+        </select>
+      </label>
     </div>
   );
 }

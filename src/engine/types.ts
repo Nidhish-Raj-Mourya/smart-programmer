@@ -31,7 +31,14 @@ export type MovementType =
   | 'Q' | 'R' | 'S' | 'T'
   | 'U' | 'V' | 'W' | 'X';
 
-export type ArrayCellState = 'default' | 'highlight' | 'match' | 'skip' | 'swap' | 'found';
+export type ArrayCellState = 'default' | 'highlight' | 'match' | 'skip' | 'swap' | 'found' | 'shifting' | 'empty' | 'new';
+
+export interface ProblemApproach {
+  what: string;
+  variables: string[];
+  steps: string[];
+  tip?: string;
+}
 
 export interface ArraySnapshot {
   kind: 'array';
@@ -59,6 +66,18 @@ export interface ArraySnapshot {
   auxSet?: number[];
   duplicateFound?: boolean;
   phase?: string;
+  window?: [number, number];
+  searchRange?: [number, number];
+  secondaryValues?: number[];
+  regionColors?: string[];
+  candidate?: number;
+  voteCount?: number;
+  floatingValue?: number;
+  floatingAt?: number;
+  emptyIndex?: number;
+  removedAt?: number;
+  removedValue?: number;
+  operation?: 'insert' | 'delete' | 'shift-right' | 'shift-left';
 }
 
 export interface CounterSnapshot {
@@ -149,6 +168,7 @@ export interface ProblemConfig<TInput = unknown> {
   innerLoopLine?: number;
   defaultInput: TInput;
   buildSteps: BuildStepsFn<TInput>;
+  approach?: ProblemApproach;
 }
 
 export interface ModuleInfo {

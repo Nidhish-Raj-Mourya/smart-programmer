@@ -23,8 +23,8 @@ export function InputPanel({ label, value, onChange, onRun, hint }: InputPanelPr
         />
       </label>
       {hint && <p className="input-hint">{hint}</p>}
-      <button type="button" className="btn-primary" onClick={onRun}>
-        Run
+      <button type="button" className="btn-primary btn-run" onClick={onRun}>
+        ▶ Run simulation
       </button>
     </div>
   );
