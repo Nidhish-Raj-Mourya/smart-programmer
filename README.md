@@ -11,11 +11,13 @@ npm run dev
 
 Open http://localhost:5173
 
-## Live site (GitHub Pages)
+## Live site
 
-After the repo is pushed to GitHub, the site deploys automatically on every push to `main`:
+**https://nidhish-raj-mourya.github.io/smart-programmer/**
 
-**https://\<your-github-username\>.github.io/smart-programmer/**
+Repo: [github.com/Nidhish-Raj-Mourya/smart-programmer](https://github.com/Nidhish-Raj-Mourya/smart-programmer)
+
+Deploys automatically on every push to `main` via GitHub Actions.
 
 ## Module 0 — Loop Foundations (implemented)
 
